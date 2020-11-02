@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class TcpClientDemo02 {
     public static void main(String[] args){
@@ -16,14 +15,14 @@ public class TcpClientDemo02 {
         FileInputStream fis = null;
         try {
             //1、创建一个socket连接
-            socket = new Socket(InetAddress.getByName("127.0.0.1"), 9999);
+            socket = new Socket(InetAddress.getByName("127.0.0.1"), 9000);
             // 2 create an output stream
             os = socket.getOutputStream();
 
             // 3. file stream
-            // 3.1 read in file
-            fis = new FileInputStream(new File("lychee.jpg"));
-            // 3.2 write out the file
+            // 3.1 读入文件
+            fis = new FileInputStream(new File("G://Code//Java//kuang//src//socket//TCP//lychee.jpg"));
+            // 3.2 将这个文件写出
             byte[] buffer = new byte[1024];
             int len;
             while((len = fis.read(buffer))!= -1){
