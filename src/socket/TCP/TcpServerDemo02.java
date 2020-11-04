@@ -1,9 +1,6 @@
 package socket.TCP;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -23,9 +20,15 @@ public class TcpServerDemo02 {
 
             byte[] buffer = new byte[1024];
             int len;
-            while((len = is.read(buffer))!= -1){
-                fos.write(buffer,0,len);
+            while((len = is.read(buffer))!= -1){  // 读取比特，用buffer存储，len表示实际buffer中存储了多少个byte
+                fos.write(buffer,0,len);  // 从buffer中将0-len个写入到输出流中
             }
+
+            // 通知客户端完成接收
+            OutputStream os = socket.getOutputStream();
+            os.write("recieved".getBytes());
+
+
             // 5. 关闭资源
             fos.close();
             is.close();

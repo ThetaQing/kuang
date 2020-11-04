@@ -1,9 +1,6 @@
 package socket.TCP;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -13,6 +10,8 @@ public class TcpClientDemo02 {
         Socket socket = null;
         OutputStream os = null;
         FileInputStream fis = null;
+        InputStream inputStream =null;
+        ByteArrayOutputStream baos = null;
         try {
             //1、创建一个socket连接
             socket = new Socket(InetAddress.getByName("127.0.0.1"), 9000);
@@ -29,11 +28,38 @@ public class TcpClientDemo02 {
                 os.write(buffer,0,len);
 
             }
+            // 通知服务器已经传输完成
+            socket.shutdownOutput();  // 传输完成
+            // 确定服务端接收完毕
+            inputStream = socket.getInputStream();
+            // getBytes返回的是byte[]类型
+            baos = new ByteArrayOutputStream();
+
+            byte[] buffer2 = new byte[1024];
+            int len2;
+            while((len2=inputStream.read(buffer2))!=-1){
+                baos.write(buffer2,0,len2);
+            }
+            System.out.println(baos.toString());
 
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             // 关闭资源
+            if(baos != null) {
+                try {
+                    baos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             if (fis != null) {
                 try {
                     fis.close();

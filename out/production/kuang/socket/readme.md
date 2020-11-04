@@ -99,5 +99,103 @@ UDP：发短信
 * 导弹  
 * DDOS：洪水攻击，（饱和攻击）  
 ### 2.4 TCP
+
 客户端  
-服务器
+1、通过socket连接服务器；  
+2、发送消息getOutPutStream。  
+```java
+package socket.TCP;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+//客户端
+public class TcpClientDemo01 {
+    public static void main(String[] args) {
+
+        Socket socket = null;
+        OutputStream os = null;
+        try {
+            // 1、要知道的服务器地址、端口号
+            InetAddress serverIP = InetAddress.getByName("127.0.0.1");
+            int port = 9999;
+
+            // 2、创建一个socket连接
+            socket = new Socket(serverIP,port);
+
+            // 3、发送消息  IO 流
+            os = socket.getOutputStream();
+            os.write("hello,welcome to class".getBytes());
+
+            // 关闭资源
+            os.close();
+            socket.close();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        //todo:关闭资源
+        }
+
+    }
+}
+
+```
+服务器  
+1、建立服务的端口ServeSocket；  
+2、等待客户端连接accept；  
+3、读取客户端消息getInputStream。  
+```java
+package socket.TCP;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+// 服务端
+public class TcpServerDemo01 {
+    public static void main(String[] args) {
+        ServerSocket serverSocket = null;
+        Socket socket = null;
+        InputStream is = null;
+        ByteArrayOutputStream baos = null;
+        try {
+            // 1、我得有一个地址
+            serverSocket = new ServerSocket(9999);
+
+            while(true){  // 循环监听
+                // 2. 等待客户端连接过来
+                socket = serverSocket.accept();  // 监听，一旦监听到就是来自客户端的socket
+
+                // 3、读取客户端的消息
+                is = socket.getInputStream();
+                // 管道流,通过管道流将两节包裹起来，如果直接用string去写入的话，一旦出现中文就有可能乱码
+                baos = new ByteArrayOutputStream();
+
+                byte[] buffer = new byte[1024];
+                int len;
+                while((len = is.read(buffer))!= -1){
+                    baos.write(buffer,0,len);
+                }
+                System.out.println(baos.toString());
+            }
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+          // todo:关闭资源
+        }
+    }
+}
+
+```  
+注意：端口号一定要对应  
+### 2.5 文件上传
