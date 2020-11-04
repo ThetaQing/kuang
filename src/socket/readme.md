@@ -6,7 +6,7 @@
 网络编程的目的：传播交流信息，数据交换，通信  
 想要达到这个目的需要什么：  
 1、如何准确地定位网络上地一台主机 192.168.16.124：端口，定位到该计算机上的某个资源；  
-2、找到了这个主机，如何传输数据呢？传输介质
+2、找到了这个主机，如何传输数据呢？传输介质  
 ### 1.2 网络通信的要素
 * 如何实现网络的通信：  
 通信双方的地址：ip+端口号  
@@ -18,7 +18,8 @@
 * 2、网络编程中的要素  
 IP和端口号；IP类  
 网络通信协议。TCP类、UDP类  
-* 3、万物皆对象
+* 3、socket：套接字，即两台机器之间通讯的端点。  
+* 4、万物皆对象
 
 ## 2 实际应用
 ### 2.1 IP
@@ -201,60 +202,247 @@ public class TcpServerDemo01 {
   
 **文件上传**
 ==传输的是什么就用什么管道流，这里前半部分传输的是文件用文件的管道流，后半部分传输的是比特流，就用比特流管道==  
+注意这里的输入输出是以服务器为参照，输入流表示输入服务器。  
 客户端  
+* 1、创建一个socket连接；  
+* 2、创建一个输出流；  
+* 3、准备输出数据，如果是一个文件，创建一个文件输入流，将文件读入内存并用buffer完成读写，并写入到输出流中；  
+* 4、通知服务器发送完成；  
+* 5、确认服务器接收完毕，客户端接收服务器发来的确认消息用ByteArrayOutputStream完成接收；  
+* 6、关闭资源  
 ```java
-//1、创建一个socket连接
-socket = new Socket(InetAddress.getByName("127.0.0.1"), 9000);
-// 2 create an output stream
-os = socket.getOutputStream();
+package socket.TCP;
 
-// 3. file stream
-// 3.1 读入文件
-fis = new FileInputStream(new File("G://Code//Java//kuang//src//socket//TCP//lychee.jpg"));
-// 3.2 将这个文件写出
-byte[] buffer = new byte[1024];
-int len;
-while((len = fis.read(buffer))!= -1){
-    os.write(buffer,0,len);
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
 
+public class TcpClientDemo02 {
+    public static void main(String[] args){
+
+        Socket socket = null;
+        OutputStream os = null;
+        FileInputStream fis = null;
+        InputStream inputStream =null;
+        ByteArrayOutputStream baos = null;
+        try {
+            //1、创建一个socket连接
+            socket = new Socket(InetAddress.getByName("127.0.0.1"), 9000);
+            // 2 create an output stream
+            os = socket.getOutputStream();
+
+            // 3. file stream
+            // 3.1 读入文件
+            fis = new FileInputStream(new File("G://Code//Java//kuang//src//socket//TCP//lychee.jpg"));
+            // 3.2 将这个文件写出
+            byte[] buffer = new byte[1024];
+            int len;
+            while((len = fis.read(buffer))!= -1){
+                os.write(buffer,0,len);
+
+            }
+            // 通知服务器已经传输完成
+            socket.shutdownOutput();  // 传输完成
+            // 确定服务端接收完毕
+            inputStream = socket.getInputStream();
+            // getBytes返回的是byte[]类型
+            baos = new ByteArrayOutputStream();
+
+            byte[] buffer2 = new byte[1024];
+            int len2;
+            while((len2=inputStream.read(buffer2))!=-1){
+                baos.write(buffer2,0,len2);
+            }
+            System.out.println(baos.toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源
+            if(baos != null) {
+                try {
+                    baos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(socket!= null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+    }
 }
-// 通知服务器已经传输完成
-socket.shutdownOutput();  // 传输完成
-// 确定服务端接收完毕
-inputStream = socket.getInputStream();
-// getBytes返回的是byte[]类型
-baos = new ByteArrayOutputStream();
 
-byte[] buffer2 = new byte[1024];
-int len2;
-while((len2=inputStream.read(buffer2))!=-1){
-    baos.write(buffer2,0,len2);
-}
-System.out.println(baos.toString());
 ```
 服务端  
+* 1、创建一个socket连接；  
+* 2、监听客户端的连接；  
+* 3、创建输入流对客户端发来的socket进行读取socket.getInputStream；  
+* 4、将输入流写出到内存；  
+* 5、通知客户端完成接收；  
+* 6、关闭资源。  
 ```java
-// 1 create a socket
-ServerSocket serverSocket = new ServerSocket(9000);
-//2. listen to client
-Socket socket = serverSocket.accept();  // 阻塞式监听，会一直等待客户端连接
-// 3. get instream
-InputStream is = socket.getInputStream();  // 读取文件流
+package socket.TCP;
 
-// 4. 文件输出 将这个文件写出
-FileOutputStream fos = new FileOutputStream(new File("G://Code//Java//kuang//src//socket//TCP//receive.png"));
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-byte[] buffer = new byte[1024];
-int len;
-while((len = is.read(buffer))!= -1){
-    fos.write(buffer,0,len);
+public class TcpServerDemo02 {
+    public static void main(String[] args) {
+        try {
+
+            // 1 create a socket
+            ServerSocket serverSocket = new ServerSocket(9000);
+            //2. listen to client
+            Socket socket = serverSocket.accept();  // 阻塞式监听，会一直等待客户端连接
+            // 3. get instream
+            InputStream is = socket.getInputStream();  // 读取文件流
+
+            // 4. 文件输出 将这个文件写出
+            FileOutputStream fos = new FileOutputStream(new File("G://Code//Java//kuang//src//socket//TCP//receive.png"));
+
+            byte[] buffer = new byte[1024];
+            int len;
+            while((len = is.read(buffer))!= -1){  // 读取比特，用buffer存储，len表示实际buffer中存储了多少个byte
+                fos.write(buffer,0,len);  // 从buffer中将0-len个写入到输出流中
+            }
+
+            // 通知客户端完成接收
+            OutputStream os = socket.getOutputStream();
+            os.write("recieved".getBytes());
+
+
+            // 5. 关闭资源
+            fos.close();
+            is.close();
+            socket.close();
+            serverSocket.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
- // 通知客户端完成接收
-OutputStream os = socket.getOutputStream();
-os.write("recieved".getBytes());
 
 ```
 **Tomcat服务器**
 
 ### 2.5 UDP
+发短信：不用连接，但是需要知道对方地址  
+DatagramPacket、 DatagramSocket  
+发送端：  
+* 1、创建socket；  
+* 2、创建一个包用于发送；  
+* 3、发送这个包。
+```java
+package socket.UDP;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+
+// 没有明确的客户端和服务端，这里只是做个区分
+// 不需要连接服务端
+public class UdpSendDemo01 {
+    public static void main(String[] args) {
+
+        try {
+            // 1. 建立一个socket
+            DatagramSocket socket = new DatagramSocket();
+
+            // 2. 创建一个包
+            // 2.1 需要发送的数据
+            String msg = "你好啊，服务器！";
+            //  2.2 服务器地址、端口号
+            InetAddress localhost = InetAddress.getByName("localhost");
+            int port = 9090;
+            // 2.3 创建这个包
+            DatagramPacket packet = new DatagramPacket(msg.getBytes(), 0, msg.getBytes().length, localhost, port);
+
+            // 3. 发送这个包
+            socket.send(packet);
+
+            // 4. 关闭流
+            socket.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+
+```  
+
+接收端：  
+* 1、开放这个端口；  
+* 2、创建一个包用于接收；  
+* 3、 接收一个发送端发来的包。  
+```java
+package socket.UDP;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+
+// 没有明确的服务端概念，这里只是为方便区分
+
+// 接收端：等待发送端的发送
+public class UdpReceivedDemo01 {
+    public static void main(String[] args) {
+
+        try {
+            // 1. 开放端口
+            DatagramSocket socket = new DatagramSocket(9090);
+
+            // 2. 接收
+            // 2.1 创建接收的包容器
+            byte[] buffer = new byte[1024];
+            DatagramPacket packet = new DatagramPacket(buffer, 0, buffer.length);
+            // 2.2 接收
+            socket.receive(packet);  // 阻塞接收
+
+            System.out.println(packet.getAddress().getHostAddress());
+            System.out.println(new String(packet.getData()));  // 显示
+            // 3. 关闭
+            socket.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```  
+
+

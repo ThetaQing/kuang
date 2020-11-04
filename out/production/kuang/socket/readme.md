@@ -6,7 +6,7 @@
 网络编程的目的：传播交流信息，数据交换，通信  
 想要达到这个目的需要什么：  
 1、如何准确地定位网络上地一台主机 192.168.16.124：端口，定位到该计算机上的某个资源；  
-2、找到了这个主机，如何传输数据呢？传输介质
+2、找到了这个主机，如何传输数据呢？传输介质  
 ### 1.2 网络通信的要素
 * 如何实现网络的通信：  
 通信双方的地址：ip+端口号  
@@ -18,7 +18,8 @@
 * 2、网络编程中的要素  
 IP和端口号；IP类  
 网络通信协议。TCP类、UDP类  
-* 3、万物皆对象
+* 3、socket：套接字，即两台机器之间通讯的端点。  
+* 4、万物皆对象
 
 ## 2 实际应用
 ### 2.1 IP
@@ -198,4 +199,65 @@ public class TcpServerDemo01 {
 
 ```  
 注意：端口号一定要对应  
-### 2.5 文件上传
+  
+**文件上传**
+==传输的是什么就用什么管道流，这里前半部分传输的是文件用文件的管道流，后半部分传输的是比特流，就用比特流管道==  
+客户端  
+```java
+//1、创建一个socket连接
+socket = new Socket(InetAddress.getByName("127.0.0.1"), 9000);
+// 2 create an output stream
+os = socket.getOutputStream();
+
+// 3. file stream
+// 3.1 读入文件
+fis = new FileInputStream(new File("G://Code//Java//kuang//src//socket//TCP//lychee.jpg"));
+// 3.2 将这个文件写出
+byte[] buffer = new byte[1024];
+int len;
+while((len = fis.read(buffer))!= -1){
+    os.write(buffer,0,len);
+
+}
+// 通知服务器已经传输完成
+socket.shutdownOutput();  // 传输完成
+// 确定服务端接收完毕
+inputStream = socket.getInputStream();
+// getBytes返回的是byte[]类型
+baos = new ByteArrayOutputStream();
+
+byte[] buffer2 = new byte[1024];
+int len2;
+while((len2=inputStream.read(buffer2))!=-1){
+    baos.write(buffer2,0,len2);
+}
+System.out.println(baos.toString());
+```
+服务端  
+```java
+// 1 create a socket
+ServerSocket serverSocket = new ServerSocket(9000);
+//2. listen to client
+Socket socket = serverSocket.accept();  // 阻塞式监听，会一直等待客户端连接
+// 3. get instream
+InputStream is = socket.getInputStream();  // 读取文件流
+
+// 4. 文件输出 将这个文件写出
+FileOutputStream fos = new FileOutputStream(new File("G://Code//Java//kuang//src//socket//TCP//receive.png"));
+
+byte[] buffer = new byte[1024];
+int len;
+while((len = is.read(buffer))!= -1){
+    fos.write(buffer,0,len);
+}
+
+ // 通知客户端完成接收
+OutputStream os = socket.getOutputStream();
+os.write("recieved".getBytes());
+
+```
+**Tomcat服务器**
+
+### 2.5 UDP
+发短信：不用连接，但是需要知道对方地址  
+DatagramPacket  、 Datagram
