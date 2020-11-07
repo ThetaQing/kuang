@@ -359,6 +359,7 @@ public class TcpServerDemo02 {
 ### 2.5 UDP
 发短信：不用连接，但是需要知道对方地址  
 DatagramPacket、 DatagramSocket  
+==基础实现==UDPDemo01系列  
 发送端：  
 * 1、创建socket；  
 * 2、创建一个包用于发送；  
@@ -444,5 +445,241 @@ public class UdpReceivedDemo01 {
 }
 
 ```  
+==实现单方面循环发送==Chat01系列  
+发送端  
+关键在于从控制台读取数据  
+```java
+package socket.Chat;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.*;
+
+public class UdpSenderDemo01 {
+    public static void main(String[] args) {
+        new Thread();
+
+
+        try {
+            // 1、 创建socket
+            DatagramSocket socket = new DatagramSocket(8888);
+            // 2、创建包
+            // 准备数据信息
+
+            byte[] buffer = new byte[1024];
+            // 从控制台读取
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            while(true){
+                String data = reader.readLine();
+                DatagramPacket packet = new DatagramPacket(data.getBytes(),0,data.getBytes().length,new InetSocketAddress("localhost",8080));
+                // 3、发送包
+                socket.send(packet);
+                if(data.contains("bye")){
+                    System.out.println("see you~");
+                    break;
+                }
+
+            }
+            // 4 close
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+
+```  
+接收端  
+```java
+package socket.Chat;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+
+public class UdpReceiveDemo01 {
+    public static void main(String[] args) {
+
+        try {
+            // 1、开启端口
+            DatagramSocket socket = new DatagramSocket(8080);
+            // 2、接收包
+
+            while(true){
+                byte[] msg = new byte[1024];  // 准备接收的包裹
+                DatagramPacket packet = new DatagramPacket(msg, 0, msg.length);
+
+
+                socket.receive(packet);  // 阻塞式接收包裹
+                // 3、显示并判断
+                byte[] data = packet.getData();
+                String receiveData = new String(data, 0, data.length);
+                System.out.println(receiveData);
+                if (receiveData.contains("bye")) {
+                    System.out.println("see you~");
+
+
+                    break;
+
+                }
+
+            }
+            System.out.println("end");
+            socket.close();
+
+
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+
+```  
+==两方都能循环发送循环接收==Chat02系列  
+1、首先准备发送数据的线程；  
+2、再准备接收的数据的线程；
+3、给双方开两个线程。  
+循环发送的线程：  
+```java
+package socket.Chat;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+
+public class TalkSender implements Runnable{
+
+    DatagramSocket socket = null;
+    BufferedReader reader = null;
+    DatagramPacket packet = null;
+    private int fromPort;
+    private String toIP;
+    private int toPort;
+    //byte[] buffer = null;
+
+    public TalkSender(int fromPort, String toIP, int toPort) {
+        this.fromPort = fromPort;
+        this.toIP = toIP;
+        this.toPort = toPort;
+        try {
+            //this.buffer = new byte[1024];
+            this.socket = new DatagramSocket(this.fromPort);
+            this.reader = new BufferedReader(new InputStreamReader(System.in));
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        // 发送消息
+        try {
+            // 从控制台读取
+
+            while(true){
+                String data = this.reader.readLine();
+                this.packet = new DatagramPacket(data.getBytes(),0,data.getBytes().length,new InetSocketAddress(toIP,toPort));
+                // 3、发送包
+                this.socket.send(packet);
+                if(data.contains("bye")){
+                    System.out.println("see you~");
+                    break;
+                }
+
+            }
+            // 4 close
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+}
+
+```  
+循环接收的线程：  
+```java
+package socket.Chat;
+
+import java.io.IOException;
+import java.net.*;
+
+public class TalkReceiver implements Runnable{
+    DatagramSocket socket = null;
+    DatagramPacket packet = null;
+    private int port;
+    private String msgFrom;
+
+    public TalkReceiver(int port,String msgFrom) {
+        this.port = port;
+        this.msgFrom = msgFrom;
+        try {
+            socket = new DatagramSocket(this.port);  // 打开这个端口
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        while(true){
+            try {
+                byte[] buffer = new byte[1024];
+                packet = new DatagramPacket(buffer,0,buffer.length);
+                this.socket.receive(this.packet);
+                String data = new String(packet.getData(),0,packet.getData().length);
+                System.out.println(msgFrom + data);
+                if(data.contains("bye"))
+                    break;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        socket.close();
+
+
+    }
+
+
+}
+
+```  
+两个聊天双方,注意端口对齐：  
+```java
+package socket.Chat;
+
+public class TalkStudent {
+    public static void main(String[] args) {
+        // 开启两个线程
+        new Thread(new TalkSender(6666,"localhost",9999)).start();
+        new Thread(new TalkReceiver(8888,"teacher：")).start();
+    }
+}
+
+```  
+
+```java
+package socket.Chat;
+
+public class TalkTeacher {
+    public static void main(String[] args) {
+        new Thread(new TalkSender(7777,"localhost",8888)).start();
+        new Thread(new TalkReceiver(9999,"student：")).start();
+
+    }
+}
+
+```  
 
