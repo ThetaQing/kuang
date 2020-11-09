@@ -70,4 +70,8 @@ class User{
                 ", age=" + age +
                 '}';
     }
+
+    private void privateMethod(){
+        System.out.println("私有方法");
+    }
 }
