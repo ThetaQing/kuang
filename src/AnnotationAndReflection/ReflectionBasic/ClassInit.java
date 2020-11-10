@@ -1,4 +1,7 @@
 package AnnotationAndReflection.ReflectionBasic;
+
+import java.io.PrintWriter;
+
 // 测试什么时候会发生类的初始化，什么时候不会发生类的初始化
 public class ClassInit {
     static {
@@ -33,6 +36,16 @@ public class ClassInit {
 
         // 3 引用常量
         System.out.println(Son.const_son);  // 只初始化main
+
+        String str = "a"+1+2;
+        System.out.println(str);
+
+
+        System.out.println(('a' + 1 + 2));
+        String str2 = 1 + 2 + "a";
+        System.out.println(str2);
+
+        
 
 
     }
