@@ -19,7 +19,7 @@ public class UrlDown {
             // 4、解析流
             byte[] buffer = new byte[1024];
             int len;
-            FileOutputStream fileOutputStream = new FileOutputStream(new File("G://Code//Java//kuang//src//socket//URL//receive.jpg"));
+            FileOutputStream fileOutputStream = new FileOutputStream(new File("./src/socket/URL/receive.jpg"));
             while((len = inputStream.read(buffer))!=-1){
                 fileOutputStream.write(buffer,0,len);
             }

@@ -1,10 +1,21 @@
 package AnnotationAndReflection.Application;
 
-public class User{
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String name;
     private int id;
-    private int age;
+    private transient int age;
+    private static String country="China";
     public User() {
+    }
+
+    public static String getCountry() {
+        return country;
+    }
+
+    public static void setCountry(String country) {
+        User.country = country;
     }
 
     public User(String name, int id, int age) {
@@ -43,6 +54,7 @@ public class User{
                 "name='" + name + '\'' +
                 ", id=" + id +
                 ", age=" + age +
+                ", country=" + country +
                 '}';
     }
 }
