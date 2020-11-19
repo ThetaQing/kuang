@@ -174,8 +174,79 @@ BufferedWriter将文本写入字符输出流，缓冲字符，以提供单个字
 
 ### 3.4 打印流
 PrintWriter将对象的格式表示打印到文本输出流。  
+原样打印到目标中。  
+
+## 4 转换流
+桥转换流：InputStreamReader、OutputStreamWriter  
+* 可将字节流转换为字符流；  
+* 可设置字符的编码方式。  
 
 
+InputStreamReader从字节流到字符流的桥：它读取字节，并使用指定的charset将其解码为字符 。
+* int read() 
+读一个字符  
+* int read(char[] cbuf, int offset, int length) 
+将字符读入数组的一部分。  
 
+
+OutputStreamWriter字符的桥梁流以字节流：向其写入的字符编码成使用指定的字节charset 。  
+* void write(char[] cbuf, int off, int len) 
+  写入字符数组的一部分。  
+* void write(int c) 
+  写一个字符  
+* void write(String str, int off, int len) 
+  写一个字符串的一部分。  
+## 5 File 类
+public class File
+extends Object
+implements Serializable, Comparable<File>文件和目录路径名的抽象表示。   
+* boolean createNewFile() 
+  当且仅当具有该名称的文件尚不存在时，原子地创建一个由该抽象路径名命名的新的空文件。  
+* boolean delete() 
+  删除由此抽象路径名表示的文件或目录。  
+*  boolean exists() 
+  测试此抽象路径名表示的文件或目录是否存在。 
+*  String getAbsolutePath() 
+  返回此抽象路径名的绝对路径名字符串。  
+*  String getName() 
+  返回由此抽象路径名表示的文件或目录的名称。  
+*  String getParent() 
+  返回此抽象路径名的父 null的路径名字符串，如果此路径名未命名为父目录，则返回null。  
+*  boolean isDirectory() 
+  测试此抽象路径名表示的文件是否为目录。  
+*  boolean isFile() 
+  测试此抽象路径名表示的文件是否为普通文件。  
+* long length() 
+返回由此抽象路径名表示的文件的长度。  
+* File[] listFiles(FileFilter filter) 
+返回一个抽象路径名数组，表示由此抽象路径名表示的满足指定过滤器的目录中的文件和目录。  
+* boolean renameTo(File dest) 
+重命名由此抽象路径名表示的文件。  
+* boolean mkdir() 
+  创建由此抽象路径名命名的目录。  
+ 
+ ### 5.1 FileFilter 
+ FileFilter文件过滤  
+* boolean accept(File pathname)测试指定的抽象路径名是否应包含在路径名列表中。 
+  参数 
+  pathname - 要测试的抽象路径名 
+  结果 
+  true if and only if pathname should be included 
+
+## 6 Properties类
+表示一组持久的属性。Properties可以保存到流中或从流中加载。 属性列表中的每个键及其对应的值都是一个字符串。   
+与流相关的方法：  
+* void list(PrintStream out) 
+  将此属性列表打印到指定的输出流。  
+*  void list(PrintWriter out) 
+  将此属性列表打印到指定的输出流。  
+*  void load(InputStream inStream) 
+  从输入字节流读取属性列表（键和元素对）。  
+*  void load(Reader reader) 
+  以简单的线性格式从输入字符流读取属性列表（关键字和元素对）。  
+*  void store(OutputStream out, String comments) 
+  将此属性列表（键和元素对）写入此 Properties表中，以适合于使用 load(InputStream)方法加载到 Properties表中的格式输出流。  
+*  void store(Writer writer, String comments) 
+  将此属性列表（键和元素对）写入此 Properties表中，以适合使用 load(Reader)方法的格式输出到输出字符流。  
 
 
