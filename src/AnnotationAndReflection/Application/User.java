@@ -9,21 +9,18 @@ public class User implements Serializable {
     private static String country="China";
     public User() {
     }
-
-    public static String getCountry() {
-        return country;
-    }
-
-    public static void setCountry(String country) {
-        User.country = country;
-    }
-
     public User(String name, int id, int age) {
         this.name = name;
         this.id = id;
         this.age = age;
     }
 
+    public static String getCountry() {
+        return country;
+    }
+    public static void setCountry(String country) {
+        User.country = country;
+    }
     public String getName() {
         return name;
     }
