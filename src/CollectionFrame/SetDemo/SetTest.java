@@ -125,9 +125,9 @@ public class SetTest {
         TreeSet<Person> users = new TreeSet<>(new Comparator<Person>(){
             @Override
             public int compare(Person o1, Person o2) {
-                int n1 = o1.getAge() - o2.getAge();
-                int n2 = o1.getName().compareTo(o2.getName()) ;
-                return n1 == 0? n2 : n1;
+                return o1.getAge() - o2.getAge();  // 按照年龄比较大小
+
+
             }
         });
         Person zhangsan = new Person("zhangsan", 18, 1);
@@ -291,6 +291,7 @@ class Child implements Comparable<Child>{
     public int compareTo(Child o) {
         int n1 = this.getName().compareTo(o.getName());
         int n2 = this.age - o.getAge();
+        // 先比较姓名再比较年龄
         return n1 == 0 ? n2 : n1;
     }
 
