@@ -112,10 +112,6 @@ public class SetTest {
         // 可删除
         users.remove(new Child("zhaoliu", 15, 4));
         System.out.println(users.toString());
-
-
-
-
     }
 
     /**
