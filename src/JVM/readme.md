@@ -20,19 +20,19 @@
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201094642592.png)
 
 ### 2、JVM的体系结构
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201110719217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201110719217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
 
 
 ### 3、类加载器
 	作用：加载Class文件  
 	记住：类是模板，是抽象的，对象是具体的
 	
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201100733417.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
-类加载器的分类
-	* 1、虚拟机自带的加载器  
-	* 2、启动类（根）加载器  
-	* 3、扩展类加载器  
-	* 4、应用程序（系统）加载器：返回null，java调用不到，C、C++编写的  
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201100733417.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
+类加载器的分类  
+* 1、虚拟机自带的加载器  
+* 2、启动类（根）加载器  
+* 3、扩展类加载器  
+* 4、应用程序（系统）加载器：返回null，java调用不到，C、C++编写的  
 	```java
 	package JVM.ClassLoaderDemo;
 	
@@ -79,45 +79,45 @@
 	
 	```
 ### 4、双亲委派机制
-作用：为了保障安全；
-运行一个类之前，逐级类加载器向上找 1. AppClassLoader --> 2. EXC --> 3.BOOT，所以定义重名类是无效的。假设BOOT加载器中没有这个类，倒回去找扩展类加载器EXC，如果还没有回到APP类加载器。
-过程：
-	* 1、 类加载器收到类加载的请求；  
-	* 2、将这个请求向上委托给父类加载器去完成，一直向上委托，直到启动类加载器；  
-	* 3、启动类加载器检查是否能够加载当前这个类，能加载就结束，使用当前加载器，否则，抛出异常通知子加载器进行加载；  
-	* 4、该加载器重复步骤3；  
-	* 5、都找不到就报Class Not Found。  
-	```java
-	package java.lang
-	
-	public class String{
-	    public String toString(){
-	        return "hello";
-	    }
-	
-	    public static void main(String[] args) {
-	        String string = new String();
-	        string.toString();
-	    }
-	}
-	```
-	报错内容：java.lang.String中找不到main方法。
-	报错原因：根据双亲委派机制，最终调用的是BOOT中的String类
-	```java
-	public class Student{
-	    @Override
-	    public String toString(){
-	        return "hello";
-	    }
-	
-	    public static void main(String[] args) {
-	        Student student= new Student();
-	        student.toString();
-	    }
-	}
-	```
-	正常运行
-	可以通过`student.getClass().getClassLoader()`进行确认是从哪个加载器中加载的。
+作用：为了保障安全；  
+运行一个类之前，逐级类加载器向上找 1. AppClassLoader --> 2. EXC --> 3.BOOT，所以定义重名类是无效的。假设BOOT加载器中没有这个类，倒回去找扩展类加载器EXC，如果还没有回到APP类加载器。  
+过程：  
+* 1、 类加载器收到类加载的请求；  
+* 2、将这个请求向上委托给父类加载器去完成，一直向上委托，直到启动类加载器；  
+* 3、启动类加载器检查是否能够加载当前这个类，能加载就结束，使用当前加载器，否则，抛出异常通知子加载器进行加载；  
+* 4、该加载器重复步骤3；  
+* 5、都找不到就报Class Not Found。  
+```
+package java.lang
+
+public class String{
+    public String toString(){
+        return "hello";
+    }
+
+    public static void main(String[] args) {
+        String string = new String();
+        string.toString();
+    }
+}
+```
+报错内容：java.lang.String中找不到main方法。  
+报错原因：根据双亲委派机制，最终调用的是BOOT中的String类
+```java
+public class Student{
+    @Override
+    public String toString(){
+        return "hello";
+    }
+
+    public static void main(String[] args) {
+        Student student= new Student();
+        student.toString();
+    }
+}
+```
+正常运行
+可以通过`student.getClass().getClassLoader()`进行确认是从哪个加载器中加载的。
 ### 5、java历史——沙箱安全机制（了解）
  沙箱安全机制是什么：
 	> Java安全模型的核心就是Java沙箱（sandbox）。沙箱是一个限制程序运行的环境。沙箱机制就是讲Java代码限定在虚拟机（JVM）特定的运行范围中，并且严格限制代码对本地资源访问，通过这样的措施来保证对代码的有效隔离，防止对本地系统造成破坏。
@@ -342,10 +342,10 @@ public class HeapMemoryTest {
 ```
 
 ### 15、堆内存调优
-调优位置
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201722985.png)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201746504.png)
-常用命令
+调优位置  
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201722985.png)  
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201746504.png)  
+常用命令  
 > * `-XX:+HeapDumpOnOutOfMemoryError`  当出现内存溢出时DUMP
 > * 类似的可以把`OutOfMemory`改成其他错误定位问题。
 > * `-Xms1024m`  设置初始化内存分配大小
@@ -357,7 +357,7 @@ public class HeapMemoryTest {
 
 #### 常用算法
 * 引用计数法
-计数器本身也有消耗。
+计数器本身也有消耗。  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020120219394467.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
 
 * 复制算法
@@ -365,7 +365,7 @@ public class HeapMemoryTest {
 2、总是将`From`区的对象复制到`To`区，然后`From`和`To`区的`身份发生转换`；  
 3、谁空谁是`To`，要保证`To`区在GC之后总是空的；  
 4、当一个对象经历了15次（默认值）GC之后依然存在，该对象进入老年代。可以通过设置`-XX:MaxTenuringThreshold=num`进行控制。  
-5、针对的主要是新生区的对象。  
+5、针对的主要是新生区的对象。    
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201202195811228.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
 
 好处
@@ -528,8 +528,8 @@ public class VolatileTest extends Thread {
 }`
 #### 禁止指令重排序
 不管怎么重排序，（单线程）程序的执行结果不能被改变。为了使指令更加符合CPU的执行特性，最大限度的发挥机器的性能，提高程序的执行效率，只要程序的最终结果与它顺序化情况的结果相等，那么指令的执行顺序可以与代码逻辑顺序不一致，这个过程就叫做**指令的重排序**。
-重排序的种类分为三种，分别是：编译器重排序，指令级并行的重排序，内存系统重排序。整个过程如下所示：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020120309184015.png)  
+重排序的种类分为三种，分别是：编译器重排序，指令级并行的重排序，内存系统重排序。整个过程如下所示：  
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2020120309184015.png)    
 指令重排序在单线程是没有问题的，不会影响执行结果，而且还提高了性能。但是在多线程的环境下就不能保证一定不会影响执行结果了。
 
 所以在多线程环境下，就需要禁止指令重排序。
@@ -562,8 +562,8 @@ private void hello() {
 * LoadStore 屏障：对于这样的语句Load1， LoadStore，Store2，在Store2及后续写入操作被刷出前，保证Load1要读取的数据被读取完毕。
 * StoreLoad 屏障：对于这样的语句Store1， StoreLoad，Load2，在Load2及后续所有读取操作执行前，保证Store1的写入对所有处理器可见。
 
-在每个volatile读操作后插入LoadLoad屏障，在读操作后插入LoadStore屏障。
+在每个volatile读操作后插入LoadLoad屏障，在读操作后插入LoadStore屏障。  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201203092932886.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
-在每个volatile写操作的前面插入一个StoreStore屏障，后面插入一个SotreLoad屏障。
+在每个volatile写操作的前面插入一个StoreStore屏障，后面插入一个SotreLoad屏障。  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201203093011639.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
 重点是Java内存模型(JMM)的工作方式，三大特征，还有volatile关键字。为什么喜欢问volatile关键字呢，因为volatile关键字可以扯出很多东西，比如可见性，有序性，还有内存屏障等等。 
