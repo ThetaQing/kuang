@@ -24,14 +24,15 @@
 
 
 ### 3、类加载器
-	作用：加载Class文件
+	作用：加载Class文件  
 	记住：类是模板，是抽象的，对象是具体的
-	![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201100733417.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
+	
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201100733417.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
 类加载器的分类
-	* 1、虚拟机自带的加载器
-	* 2、启动类（根）加载器
-	* 3、扩展类加载器
-	* 4、应用程序（系统）加载器：返回null，java调用不到，C、C++编写的
+	* 1、虚拟机自带的加载器  
+	* 2、启动类（根）加载器  
+	* 3、扩展类加载器  
+	* 4、应用程序（系统）加载器：返回null，java调用不到，C、C++编写的  
 	```java
 	package JVM.ClassLoaderDemo;
 	
@@ -81,11 +82,11 @@
 作用：为了保障安全；
 运行一个类之前，逐级类加载器向上找 1. AppClassLoader --> 2. EXC --> 3.BOOT，所以定义重名类是无效的。假设BOOT加载器中没有这个类，倒回去找扩展类加载器EXC，如果还没有回到APP类加载器。
 过程：
-	* 1、 类加载器收到类加载的请求；
-	* 2、将这个请求向上委托给父类加载器去完成，一直向上委托，直到启动类加载器；
-	* 3、启动类加载器检查是否能够加载当前这个类，能加载就结束，使用当前加载器，否则，抛出异常通知子加载器进行加载；
-	* 4、该加载器重复步骤3；
-	* 5、都找不到就报Class Not Found。
+	* 1、 类加载器收到类加载的请求；  
+	* 2、将这个请求向上委托给父类加载器去完成，一直向上委托，直到启动类加载器；  
+	* 3、启动类加载器检查是否能够加载当前这个类，能加载就结束，使用当前加载器，否则，抛出异常通知子加载器进行加载；  
+	* 4、该加载器重复步骤3；  
+	* 5、都找不到就报Class Not Found。  
 	```java
 	package java.lang
 	
@@ -131,18 +132,18 @@
 	`存取控制器（access controller）`：存取控制器可以控制核心API对操作系统的存取权限，而这个控制的策略设定，可以由用户指定。
 	`安全管理器（security manager）`：是核心API和操作系统之间的主要接口。实现权限控制，比存取控制器优先级高。
 	`安全软件包（security package）`：java.security下的类和扩展包下的类，允许用户为自己的应用增加新的安全特性，包括
-1、安全提供者
-2、消息摘要
-3、数字签名
-4、加密
-5、鉴别
+1、安全提供者  
+2、消息摘要  
+3、数字签名  
+4、加密  
+5、鉴别  
 
 其他知识点参考
 	[java中的安全模型(沙箱机制)](https://blog.csdn.net/qq_30336433/article/details/83268945)
 ### 6、Native（重点）
-**作用**：凡是带了native关键字的，说明java的作用范围达不到，需要调底层C语言的库，扩展JAVA的使用，融合不同的编程语言为Java所用，最初是为了融合C、C++；
-**出现的原因**：Java诞生的时候，C、C++横行，想要立足，就必须有调用C、C++的程序
-**怎么做到的**：在内存区域中，专门开辟了一块标记区域（本地方法栈），登记native方法，会在最终执行的时候加载本地方法库中的本地方法。
+**作用**：凡是带了native关键字的，说明java的作用范围达不到，需要调底层C语言的库，扩展JAVA的使用，融合不同的编程语言为Java所用，最初是为了融合C、C++；  
+**出现的原因**：Java诞生的时候，C、C++横行，想要立足，就必须有调用C、C++的程序  
+**怎么做到的**：在内存区域中，专门开辟了一块标记区域（本地方法栈），登记native方法，会在最终执行的时候加载本地方法库中的本地方法。  
 ```java
 package JVM.NativeDemo;
 
@@ -177,7 +178,7 @@ public class NativeTest {
 每个线程都有一个程序计数器，是**线程私有**的，就是一个指针，指向方法区中的方法字节码（用来存储指向下一条指令的地址，即即将要执行的指令代码），在执行引擎读取下一条指令，是一个非常小的内存空间，几乎可以忽略不计。
 ### 8、方法区
 方法区是一种特殊的堆（参见永久区），被所有线程共享，所有字段和方法字节码，以及一些特殊方法，如构造函数、接口代码也在此定义，简单地说，所有定义的方法的信息都保存在该区域，**此区域属于共享区间**。
-（要求背诵，重点）==静态变量static、常量final、类信息Class（构造方法、接口定义）、运行时的常量池存在方法区中，但是实例变量存在堆内存中，和方法区无关。==
+（要求背诵，重点）**静态变量static、常量final、类信息Class（构造方法、接口定义）、运行时的常量池存在方法区中，但是实例变量存在堆内存中，和方法区无关。**
 ### 9、栈
 栈是一种数据结构，先进后出，后进先出 FILO
 队列：先进先出，后进后出 FIFO
@@ -211,7 +212,7 @@ public class NativeTest {
 	    }
 	}
 	
-栈内存的示意图：
+栈内存的示意图：  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201154642307.png)
 
 ### 10、三种JVM
@@ -227,7 +228,7 @@ public class NativeTest {
 堆内存中分为三个区域
 * 新生区（伊甸园区）Young/New
 * 养老区old
-* 永久区perm
+* 永久区perm  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201165639572.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
 
 GC垃圾回收，主要是在伊甸园区和养老区。内存满了，报OOM，堆内存不够。`java.lang.OutOfMemoryError: Java heap space`
@@ -244,8 +245,9 @@ JDK8以后，永久存储区改名为（元空间）。
 * 1、尝试扩大堆内存`-Xms1024m -Xmx1024m -XX:+PrintGCDetails`
 >* -Xms1024m  设置初始化内存分配大小
 > * -Xmx1024m  设置最大分配内存
-> *  -XX:+PrintGCDetails  打印GC细节
- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201174332443.png)![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201174420242.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
+> *  -XX:+PrintGCDetails  打印GC细节  
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201174332443.png)  
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201174420242.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
  * 2、如果还OOM，分析内存，看一下哪个地方出现了问题（专业工具）
 
 #### 如果出现了OOM，该如何排除
@@ -262,13 +264,13 @@ MAT、JProfiler作用：
 > `-XX:+HeapDumpOnOutOfMemoryError`  当出现内存溢出时DUMP
 > 类似的可以把`OutOfMemory`改成其他错误定位问题。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201722985.png)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201746504.png)
-* 2、使用JProfiler打开该文件（和src同级的目录下），利用JProfile分析。
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201722985.png)  
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201746504.png)  
+* 2、使用JProfiler打开该文件（和src同级的目录下），利用JProfile分析。  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201203181.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
-* 2.1 先查看大对象，找到出错的原因
+* 2.1 先查看大对象，找到出错的原因  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201533828.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
-* 2.2 从线程中定位代码行数。
+* 2.2 从线程中定位代码行数。  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201201435901.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
 
 ### 13、老年区
@@ -293,7 +295,7 @@ public class HeapOverTest {
 }
 
 ```
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201180146291.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201180146291.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
 
 ### 14、永久区
 这个区域常驻内存，用来存放JDK自身携带的Class对象，Interface元数据，存储的是Java运行时的一些环境或类信息，==这个区域不存在垃圾回收==。在JVM关闭时，释放这个区域的内存。
@@ -301,8 +303,8 @@ public class HeapOverTest {
 * jdk1.6之前：永久代，常量池是在方法区；
 * jdk1.7：永久代慢慢退化，去永久化，常量池在堆中；
 * jdk1.8后：无永久代，常量池在元空间。
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201175208766.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
-元空间逻辑上存在但物理上不存在，利用`-Xms1024m -Xmx1024m -XX:+PrintGCDetails`优化堆空间后：
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201201175208766.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
+元空间逻辑上存在但物理上不存在，利用`-Xms1024m -Xmx1024m -XX:+PrintGCDetails`优化堆空间后：  
 ```
 package JVM.HeapDemo;
 
@@ -359,11 +361,11 @@ public class HeapMemoryTest {
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020120219394467.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
 
 * 复制算法
-1、每次GC都会将Eden中的对象复制到幸存`To`区；一旦Eden被GC之后就变为空；
-2、总是将`From`区的对象复制到`To`区，然后`From`和`To`区的`身份发生转换`；
-3、谁空谁是`To`，要保证`To`区在GC之后总是空的；
-4、当一个对象经历了15次（默认值）GC之后依然存在，该对象进入老年代。可以通过设置`-XX:MaxTenuringThreshold=num`进行控制。 
-5、针对的主要是新生区的对象。
+1、每次GC都会将Eden中的对象复制到幸存`To`区；一旦Eden被GC之后就变为空；  
+2、总是将`From`区的对象复制到`To`区，然后`From`和`To`区的`身份发生转换`；  
+3、谁空谁是`To`，要保证`To`区在GC之后总是空的；  
+4、当一个对象经历了15次（默认值）GC之后依然存在，该对象进入老年代。可以通过设置`-XX:MaxTenuringThreshold=num`进行控制。  
+5、针对的主要是新生区的对象。  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201202195811228.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
 
 好处
@@ -374,7 +376,7 @@ public class HeapMemoryTest {
 
 复制算法最佳使用场景：对象存活度较低的时候，即新生区。
 
-* 标记清除算法
+* 标记清除算法  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201202201327557.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
 
 好处
@@ -383,7 +385,7 @@ public class HeapMemoryTest {
 缺点
 > 两次扫描严重浪费时间，会产生内存碎片
 
-* 标记清除压缩法
+* 标记清除压缩法  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201202201724570.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
 
 好处
@@ -419,8 +421,8 @@ JVM调优：标记清除和标记压缩怎么进行混合。
 Java Memory Model，Java内存模型
 * 2、它是用来做什么的？
 作用：是一种缓存一致性协议，用于定义数据读写的**规则**。
-JMM定义了线程工作内存(==每个线程都有自己的工作区域，是从主内存中拷贝的==)和主内存之间的抽象关系：线程之间的共享变量存储在主内存（Main Memory）中，每个线程都有一个私有的本地内存（Local Memory）
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201202210432358.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
+JMM定义了线程工作内存(==每个线程都有自己的工作区域，是从主内存中拷贝的==)和主内存之间的抽象关系：线程之间的共享变量存储在主内存（Main Memory）中，每个线程都有一个私有的本地内存（Local Memory）  
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201202210432358.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
 
 解决共享对象可见性这个问题：volatile关键字，保证一致性，及时刷新到主内存。
 * 3、它该如何学习？
@@ -462,7 +464,7 @@ JMM只能保证基本的原子性，如果要保证一个代码块的原子性�
 > * synchronized的原理是，一个线程lock之后，必须unlock后，其他线程才可以重新lock，使得被synchronized包住的代码块在多线程之间是串行执行的。
     
 #### 八种内存交互操作
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201202222745622.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201202222745622.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
 * lock(锁定)，作用于主内存中的变量，把变量标识为线程独占的状态。
 * read(读取)，作用于主内存的变量，把变量的值从主内存传输到线程的工作内存中，以便下一步的load操作使用。
 * load(加载)，作用于工作内存的变量，把read操作主存的变量放入到工作内存的变量副本中。
@@ -478,8 +480,8 @@ JMM只能保证基本的原子性，如果要保证一个代码块的原子性�
 1、保证线程间变量的可见性。
 2、禁止CPU进行指令重排序。(使用内存屏障达到禁止指令重排序，以保证有序性)
 
-volatile修饰的变量，当一个线程改变了该变量的值，其他线程是立即可见的。普通变量则需要重新读取才能获得最新值。volatile保证可见性的流程大概就是这个一个过程：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201203090943630.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
+volatile修饰的变量，当一个线程改变了该变量的值，其他线程是立即可见的。普通变量则需要重新读取才能获得最新值。volatile保证可见性的流程大概就是这个一个过程：  
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201203090943630.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
 #### volatile一定能保证线程安全吗
 volatile不能一定能保证线程安全。
 ```java
@@ -527,7 +529,7 @@ public class VolatileTest extends Thread {
 #### 禁止指令重排序
 不管怎么重排序，（单线程）程序的执行结果不能被改变。为了使指令更加符合CPU的执行特性，最大限度的发挥机器的性能，提高程序的执行效率，只要程序的最终结果与它顺序化情况的结果相等，那么指令的执行顺序可以与代码逻辑顺序不一致，这个过程就叫做**指令的重排序**。
 重排序的种类分为三种，分别是：编译器重排序，指令级并行的重排序，内存系统重排序。整个过程如下所示：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2020120309184015.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2020120309184015.png)  
 指令重排序在单线程是没有问题的，不会影响执行结果，而且还提高了性能。但是在多线程的环境下就不能保证一定不会影响执行结果了。
 
 所以在多线程环境下，就需要禁止指令重排序。
@@ -561,7 +563,7 @@ private void hello() {
 * StoreLoad 屏障：对于这样的语句Store1， StoreLoad，Load2，在Load2及后续所有读取操作执行前，保证Store1的写入对所有处理器可见。
 
 在每个volatile读操作后插入LoadLoad屏障，在读操作后插入LoadStore屏障。
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201203092932886.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201203092932886.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
 在每个volatile写操作的前面插入一个StoreStore屏障，后面插入一个SotreLoad屏障。
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20201203093011639.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)
-重点是Java内存模型(JMM)的工作方式，三大特征，还有volatile关键字。为什么喜欢问volatile关键字呢，因为volatile关键字可以扯出很多东西，比如可见性，有序性，还有内存屏障等等。
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20201203093011639.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoZXJhX3Fpbmc=,size_16,color_FFFFFF,t_70)  
+重点是Java内存模型(JMM)的工作方式，三大特征，还有volatile关键字。为什么喜欢问volatile关键字呢，因为volatile关键字可以扯出很多东西，比如可见性，有序性，还有内存屏障等等。 
